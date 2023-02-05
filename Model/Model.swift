@@ -14,34 +14,28 @@ func loadNews(completionHandler: (()->Void)?) { // загрузка json и со
     let session = URLSession(configuration: .default)
     
     let downloadTask = session.downloadTask(with: url!) {  (urlFile, responce, error) in
+        
         if urlFile != nil {
-            let path = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0] + "/data.json" // возвр путь в директорию пользователя
+            
+            let path = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0] + "/data.json" // возвращает путь в директорию пользователя
             let urlPath = URL(fileURLWithPath: path)
             try? FileManager.default.copyItem(at: urlFile!, to: urlPath)
-            
-            //print(urlPath)
-            
             parseNews()
             completionHandler?()
-            
             print(articles.count)
             print(articles[0])
         }
     }
-    
     downloadTask.resume()
 }
 
 func parseNews() {
-    let path = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0] + "/data.json" // возвр путь в директорию пользователя
+    let path = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0] + "/data.json"
     let urlPath = URL(fileURLWithPath: path)
-    
     let data = try? Data(contentsOf: urlPath)
     if data == nil {
         return
     }
-    
-    //let rootDictionary = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! Dictionary<String, Any>
     
     let rootDictionaryAny = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments)
     if rootDictionaryAny == nil {
@@ -62,7 +56,6 @@ func parseNews() {
                 returnArray.append(newArticle)
             }
         }
-        
         articles = returnArray
     }
 }

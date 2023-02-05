@@ -17,12 +17,19 @@ class OneNewsViewController: UIViewController {
     
     @IBOutlet weak var labelTitle: UILabel!
     
+    @IBOutlet weak var openInSafariButton: UIButton!
+    
     @IBOutlet weak var labelDescriotion: UILabel!
     
+    @IBOutlet weak var date: UILabel!
+    
+    @IBOutlet weak var source: UILabel!
+    
     @IBAction func pushOpenAction(_ sender: Any) {
-            let urlW0 = article.url
+        
+            let urlToMove = article.url
             let moveToWebView = self.storyboard?.instantiateViewController(withIdentifier: "WebViewController") as! WebViewController
-            moveToWebView.urlW = urlW0
+            moveToWebView.urlW = urlToMove
             moveToWebView.testData = article.title
             self.navigationController?.pushViewController(moveToWebView, animated: true)
         }
@@ -30,9 +37,15 @@ class OneNewsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        date.text = "Published at " + article.publishedAt
+        source.text = "Source: " + article.sourceName
         labelTitle.text = article.title
         labelDescriotion.text = article.description
+        
+        if article.url == "url nil" {
+            openInSafariButton.isEnabled = false
+        }
         
         DispatchQueue.main.async {
             

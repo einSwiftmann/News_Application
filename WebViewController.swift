@@ -13,32 +13,16 @@ class WebViewController: UIViewController {
     var urlW: String?
     var testData: String?
     
-
     @IBOutlet weak var webView: WKWebView!
-    
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //print("----------1\(urlW)")
-        //print("----------2\(urlW)")
         if urlW != nil {
             webView.load(URLRequest(url: URL(string: urlW!)!))
         }
         else {
             return
         }
-       
-        //labelTitle.text = article.title
-        
-        /*if let urlW = URL(string: self.article.url) {
-          
-               self.webView.load(URLRequest(url: urlW))
-           
-       }
-         */
-       
    }
     
         

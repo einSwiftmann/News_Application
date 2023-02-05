@@ -8,7 +8,17 @@
 import UIKit
 
 class TableViewController: UITableViewController {
-
+    
+    
+    @IBAction func refreshControlAction(_ sender: Any) {
+        loadNews {
+            DispatchQueue.main.async {
+                self.refreshControl?.endRefreshing()
+                self.tableView.reloadData()
+            }
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         loadNews {
@@ -16,43 +26,49 @@ class TableViewController: UITableViewController {
                 self.tableView.reloadData()
             }
         }
-        print("Here we go 1 \(articles.count)")
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        print("Here we go 2  \(articles.count)")
         return articles.count
     }
      
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         let article = articles[indexPath.row]
         cell.textLabel?.text = article.title
-        cell.detailTextLabel?.text = article.publishedAt
-
+        
+        if let url = URL(string: article.urlToImage) {
+            if let dataImage = try? Data(contentsOf: url) {
+                cell.imageView?.image = UIImage(data: dataImage)
+                }
+            }
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { // выз при нажатии на ячейку таблицы
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80.0
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { // вызывается при нажатии на ячейку таблицы
         performSegue(withIdentifier: "goToOneNews", sender: self)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
         if segue.identifier == "goToOneNews" {
+            
             if let indexPath = tableView.indexPathForSelectedRow {
-                (segue.destination as? OneNewsViewController)?.article = articles[tableView.indexPathForSelectedRow!.row]
                 
+                (segue.destination as? OneNewsViewController)?.article = articles[tableView.indexPathForSelectedRow!.row]
                 tableView.deselectRow(at: indexPath, animated: true)
             }
         }
